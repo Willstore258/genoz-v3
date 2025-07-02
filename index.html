@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GENOZ V3</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #222; color: #eee; }
+  input, button { margin: 5px 0; padding: 8px; font-size: 16px; width: 250px; }
+  button { cursor: pointer; }
+  #login-section, #main-section { max-width: 300px; margin: auto; }
+  #main-section { display: none; margin-top: 20px; }
+  .btn-group button { width: 100%; margin: 5px 0; }
+</style>
+</head>
+<body>
+
+<h2>GENOZ V3</h2>
+
+<div id="login-section">
+  <label>Username:</label><br/>
+  <input type="text" id="username" autocomplete="off" /><br/>
+  <label>Password:</label><br/>
+  <input type="password" id="password" autocomplete="off" /><br/>
+  <button onclick="login()">Login</button>
+  <p id="login-msg" style="color: red;"></p>
+</div>
+
+<div id="main-section">
+  <label>Masukin No 628xxx:</label><br/>
+  <input type="text" id="target-no" placeholder="628xxxxxxxxxx" /><br/><br/>
+  <div class="btn-group">
+    <button onclick="genozCursor()">GENOZ-CURSOR</button>
+    <button onclick="genozProto()">GENOZ-PROTO</button>
+    <button onclick="genozProcall()">GENOZ-PROCALL</button>
+  </div>
+  <p id="status-msg"></p>
+</div>
+
+<script>
+// Contoh data user dari file JSON di GitHub public repo
+// Misal repo: https://raw.githubusercontent.com/username/repo/main/users.json
+// Format JSON: [{ "username": "user1", "password": "pass1" }, {...}]
+
+const usersJsonUrl = "https://raw.githubusercontent.com/Willstore258/genoz-v3/refs/heads/main/user.json";
+
+let usersData = [];
+
+async function fetchUsers() {
+  try {
+    const res = await fetch(usersJsonUrl);
+    if (!res.ok) throw new Error('Gagal load data user');
+    usersData = await res.json();
+  } catch(e) {
+    console.error(e);
+    document.getElementById('login-msg').textContent = "Gagal mengambil data user, coba lagi nanti.";
+  }
+}
+
+fetchUsers();
+
+function login() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const loginMsg = document.getElementById('login-msg');
+  loginMsg.textContent = "";
+
+  if(!username || !password) {
+    loginMsg.textContent = "Isi Username dan Password dulu.";
+    return;
+  }
+
+  const userFound = usersData.find(u => u.username === username && u.password === password);
+
+  if(userFound) {
+    document.getElementById('login-section').style.display = "none";
+    document.getElementById('main-section').style.display = "block";
+  } else {
+    loginMsg.textContent = "Username atau Password salah.";
+  }
+}
+
+// Fungsi bug "dummy" untuk demo
+function sendBug(type, target) {
+  const status = document.getElementById('status-msg');
+  status.textContent = `Mengirim bug tipe ${type} ke target: ${target}`;
+  // Di sini kamu bisa buat request ke server atau logic bug sebenarnya
+  console.log(`Bug "${type}" dikirim ke ${target}`);
+}
+
+// Fungsi tombol
+function genozCursor() {
+  const target = document.getElementById('target-no').value.trim();
+  if(!target) {
+    alert('Masukkan nomor target dulu');
+    return;
+  }
+  sendBug('GENOZ-CURSOR', target);
+}
+function genozProto() {
+  const target = document.getElementById('target-no').value.trim();
+  if(!target) {
+    alert('Masukkan nomor target dulu');
+    return;
+  }
+  sendBug('GENOZ-PROTO', target);
+}
+function genozProcall() {
+  const target = document.getElementById('target-no').value.trim();
+  if(!target) {
+    alert('Masukkan nomor target dulu');
+    return;
+  }
+  sendBug('GENOZ-PROCALL', target);
+}
+
+</script>
+
+</body>
+</html>
